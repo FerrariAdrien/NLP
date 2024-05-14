@@ -1,25 +1,27 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
 
 app.use(express.json());
 
+app.use(bodyParser.json());
 const extractActionObject = (request) => {
     let action = null;
     let object = null;
     const regexTab = [
         { pattern: "joue", action: "play" },
         { pattern: "jouer", action: "play" },
-        { pattern: "met la musique", action: "play" },
+        { pattern: "mets la musique", action: "play" },
         { pattern: "lire", action: "play" },
         { pattern: "écouter", action: "play" },
-        { pattern: "pause", action: "pause" },
-        { pattern: "stop", action: "stop" },
-        { pattern: "arrête", action: "stop" },
+        { pattern: "mets sur pause", action: "pause" },
+        { pattern: "stoppe la musique", action: "stop" },
+        { pattern: "arrête la musique", action: "stop" },
         { pattern: "attend", action: "pause" },
-        { pattern: "suivante", action: "next" },
+        { pattern: "musique suivante", action: "next" },
         { pattern: "suivant", action: "next" },
         { pattern: "next", action: "next" },
-        { pattern: "revient", action: "prev" },
+        { pattern: "reviens", action: "prev" },
         { pattern: "précédent", action: "prev" }
     ];
 
@@ -28,7 +30,9 @@ const extractActionObject = (request) => {
         const match = request.match(pattern);
         if (match) {
             action = regexEntry.action;
-            object = match[1];
+            if (action === "play") {
+                object = match[1];
+            }
             return true;
         }
         return false;
@@ -39,12 +43,17 @@ const extractActionObject = (request) => {
 
 // Route pour traiter les requêtes POST
 app.post('/command', (req, res) => {
-    const { command } = req.body;
+    console.log(req.body["action"]);
+    const command  = req.body["action"];
+    if (!command) {
+        return res.status(400).json({ error: 'Command is required' });
+    }
     const result = extractActionObject(command);
+    console.log(result);
     res.json(result);
 });
 
-const PORT = 3000;
+const PORT = 3001;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });

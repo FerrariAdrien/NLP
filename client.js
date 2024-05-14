@@ -16,21 +16,18 @@ class MusicCommandClient {
 }
 
 // Utilisation de la classe client
-const client = new MusicCommandClient('http://localhost:3000');
+const client = new MusicCommandClient('http://localhost:3001');
 
 // Exemple d'utilisation
 async function run() {
-    const commands = [
-        "Met la musique Hôtel California",
-        "pause la musique",
-        "suivante",
-        "revient"
-    ];
+    let commands = "joue Lucid";
 
-    for (let command of commands) {
-        const result = await client.sendCommand(command);
-        console.log(`Command: "${command}" - Server Response:`, result);
-    }
+    const result = await client.sendCommand(commands);
+    console.log(`Command: "${commands}" - Server Response:`, result);
+    // for (let command of commands) {
+    //     const result = await client.sendCommand(command);
+    //     console.log(`Command: "${command}" - Server Response:`, result);
+    // }
 }
 
 run();
